@@ -110,7 +110,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
     if(m_outfit.getCategory() == ThingCategoryCreature) {
         int animationPhase = animateWalk ? m_walkAnimationPhase : 0;
 
-        if(isAnimateAlways() && animateIdle) {
+        if(isAnimateAlways() && getAnimator() != nullptr) {
             int ticksPerFrame = 1000 / getAnimationPhases();
             animationPhase = (g_clock.millis() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
         }

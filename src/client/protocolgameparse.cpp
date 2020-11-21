@@ -534,7 +534,7 @@ void ProtocolGame::parseCoinBalance(const InputMessagePtr& msg)
 void ProtocolGame::parseCoinBalanceUpdating(const InputMessagePtr& msg)
 {
     // coin balance can be updating and might not be accurate
-    bool isUpdating = msg->getU8() == 1;
+	msg->getU8(); // is updating (bool)
 }
 
 void ProtocolGame::parseCompleteStorePurchase(const InputMessagePtr& msg)
@@ -543,10 +543,10 @@ void ProtocolGame::parseCompleteStorePurchase(const InputMessagePtr& msg)
     msg->getU8();
 
     std::string message = msg->getString();
-    int coins = msg->getU32();
-    int transferableCoins = msg->getU32();
+	msg->getU32(); // coins
+	msg->getU32(); // transferable coins
 
-    g_logger.info(stdext::format("Purchase Complete: %s\nAvailable coins: %d (transferable: %d)", message, coins, transferableCoins));
+    g_logger.info(stdext::format("Purchase Complete: %s", message));
 }
 
 void ProtocolGame::parseStoreTransactionHistory(const InputMessagePtr &msg)
@@ -705,12 +705,12 @@ void ProtocolGame::parseLoginToken(const InputMessagePtr& msg)
     g_game.processLoginToken(unknown);
 }
 
-void ProtocolGame::parsePing(const InputMessagePtr& msg)
+void ProtocolGame::parsePing(const InputMessagePtr&)
 {
     g_game.processPing();
 }
 
-void ProtocolGame::parsePingBack(const InputMessagePtr& msg)
+void ProtocolGame::parsePingBack(const InputMessagePtr&)
 {
     g_game.processPingBack();
 }
@@ -1298,7 +1298,7 @@ void ProtocolGame::parsePremiumTrigger(const InputMessagePtr& msg)
     }
 
     if(g_game.getClientVersion() <= 1096) {
-        bool something = msg->getU8() == 1;
+		msg->getU8(); // ? (bool)
     }
 }
 
@@ -1400,8 +1400,8 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     if(g_game.getFeature(Otc::GameOfflineTrainingTime)) {
         training = msg->getU16();
         if(g_game.getClientVersion() >= 1097) {
-            int remainingStoreXpBoostSeconds = msg->getU16();
-            bool canBuyMoreStoreXpBoosts = msg->getU8();
+			msg->getU16(); // remainingStoreXpBoostSeconds
+			msg->getU8(); // canBuyMoreStoreXpBoosts (bool)
         }
     }
 
@@ -1637,7 +1637,7 @@ void ProtocolGame::parseRuleViolationCancel(const InputMessagePtr& msg)
     g_game.processRuleViolationCancel(name);
 }
 
-void ProtocolGame::parseRuleViolationLock(const InputMessagePtr& msg)
+void ProtocolGame::parseRuleViolationLock(const InputMessagePtr&)
 {
     g_game.processRuleViolationLock();
 }
@@ -1946,16 +1946,16 @@ void ProtocolGame::parseModalDialog(const InputMessagePtr& msg)
     std::vector<std::tuple<int, std::string> > buttonList;
     for(int i = 0; i < sizeButtons; ++i) {
         std::string value = msg->getString();
-        int buttonId = msg->getU8();
-        buttonList.push_back(std::make_tuple(buttonId, value));
+		int buttonId = msg->getU8();
+		buttonList.emplace_back(buttonId, value);
     }
 
     int sizeChoices = msg->getU8();
     std::vector<std::tuple<int, std::string> > choiceList;
     for(int i = 0; i < sizeChoices; ++i) {
         std::string value = msg->getString();
-        int choideId = msg->getU8();
-        choiceList.push_back(std::make_tuple(choideId, value));
+		int choiceId = msg->getU8();
+		choiceList.emplace_back(choiceId, value);
     }
 
     int enterButton, escapeButton;
@@ -2378,7 +2378,7 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
     return item;
 }
 
-StaticTextPtr ProtocolGame::getStaticText(const InputMessagePtr& msg, int id)
+StaticTextPtr ProtocolGame::getStaticText(const InputMessagePtr& msg, int)
 {
     int colorByte = msg->getU8();
     Color color = Color::from8bit(colorByte);
